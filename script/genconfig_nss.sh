@@ -29,7 +29,7 @@ fi
 
 cat nss-setup/config-nss.seed |  grep -v CONFIG_PACKAGE_luci >> .config
 echo "
-CONFIG_TARGET_qualcommax_ipq807x_DEVICE_linksys_mx4300=y
+CONFIG_TARGET_qualcommax_ipq807x_DEVICE_linksys_homewrk=y
 CONFIG_PACKAGE_luci=y
 CONFIG_FEED_nss_packages=n
 " >> .config

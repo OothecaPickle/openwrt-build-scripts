@@ -27,14 +27,14 @@ if [ $type = "nss" -a $BUILD_KMOD != "n" ]; then
 fi
 
 cp .config release/fullconfig.buildinfo
-cp bin/targets/qualcommax/ipq807x/openwrt-*-ipq807x-linksys_mx4300-* release/
-cp bin/targets/qualcommax/ipq807x/openwrt-*-ipq807x-linksys_mx4300.manifest release/
+cp bin/targets/qualcommax/ipq807x/openwrt-*-ipq807x-linksys_homewrk-* release/
+cp bin/targets/qualcommax/ipq807x/openwrt-*-ipq807x-linksys_homewrk.manifest release/
 
 if [ $type = "foss" ]; then
     cp bin/targets/qualcommax/ipq807x/openwrt-imagebuilder* release/
-    kernel=$(cat release/*linksys_mx4300.manifest | grep ^kernel)
+    kernel=$(cat release/*linksys_homewrk.manifest | grep ^kernel)
 else
-    kernel=$(cat release/*linksys_mx4300.manifest | grep ^kernel | cut -d '~' -f 1)
+    kernel=$(cat release/*linksys_homewrk.manifest | grep ^kernel | cut -d '~' -f 1)
 fi
 
 checksum=$(sha256sum release/* | sed 's/release\///')
