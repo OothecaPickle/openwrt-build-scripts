@@ -1,22 +1,23 @@
-name: build nss 24.10
+name: build nss snapshot with kmod for mx4300
 on:
   workflow_dispatch:
-      
+  workflow_call:          
 jobs:
-  call-image-builder-nss-24_10:
+  call-image-builder-nss-snapshot:
     permissions:
       contents: write
     uses:
-      arix00/openwrt-mx4300/.github/workflows/_image_builder.yml@build      
+      arix00/openwrt-mx4300/.github/workflows/_image_builder.yml@build
     with:
       build_settings: 
         '{"SOURCE_REPO":  "https://github.com/openwrt/openwrt.git", 
-        "SOURCE_BRANCH": "openwrt-24.10",
+        "SOURCE_BRANCH": "main",
         "BUILD_REPO":    "https://github.com/${{github.repository}}.git",
         "BUILD_BRANCH": "build",
         "BUILD_INIT": "init_build.sh",
         "BUILD_TYPE":  "nss",
-        "BUILD_VER": "24.10-SNAPSHOT",
+        "BUILD_VER": "snapshot",
         "BUILD_TAG": "",
-        "BUILD_SYNC": "n",        
-        "BUILD_KMOD": "y"}'
+        "BUILD_SYNC": "n",
+        "BUILD_KMOD": "y",
+        "BUILD_DEVICE": "MX4300"}'

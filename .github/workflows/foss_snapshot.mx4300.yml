@@ -1,0 +1,24 @@
+name: build foss snapshot for mx4300
+on:
+  workflow_dispatch:
+  workflow_call:          
+  
+jobs:
+  call-image-builder-foss-snapshot:
+    permissions:
+      contents: write
+    uses:
+      arix00/openwrt-mx4300/.github/workflows/_image_builder.yml@build
+    with:
+      build_settings: 
+        '{"SOURCE_REPO":  "https://github.com/openwrt/openwrt.git", 
+        "SOURCE_BRANCH": "main",
+        "BUILD_REPO":    "https://github.com/${{github.repository}}.git",
+        "BUILD_BRANCH": "build",
+        "BUILD_INIT": "init_build.sh",
+        "BUILD_TYPE":  "foss",
+        "BUILD_VER": "snapshot",
+        "BUILD_TAG": "",
+        "BUILD_SYNC": "n",
+        "BUILD_KMOD": "y",
+        "BUILD_DEVICE": "MX4300"}'

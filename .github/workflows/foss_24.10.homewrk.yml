@@ -1,4 +1,4 @@
-name: build foss 24.10
+name: build foss 24.10 for homewrk
 on:
   workflow_dispatch:
   workflow_call:
@@ -8,7 +8,7 @@ jobs:
     permissions:
       contents: write
     uses:
-      arix00/openwrt-mx4300/.github/workflows/_image_builder.yml@build      
+      arix00/openwrt-mx4300/.github/workflows/_image_builder.yml@build
     with:
       build_settings: 
         '{"SOURCE_REPO":  "https://github.com/openwrt/openwrt.git", 
@@ -20,4 +20,5 @@ jobs:
         "BUILD_VER": "24.10-SNAPSHOT",
         "BUILD_TAG": "",
         "BUILD_SYNC": "y",
-        "BUILD_KMOD": "y"}'        
+        "BUILD_KMOD": "y",
+        "BUILD_DEVICE": "HomeWRK"}'
