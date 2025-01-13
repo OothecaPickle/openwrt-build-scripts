@@ -27,8 +27,8 @@ if [ $type = "nss" -a $BUILD_KMOD != "n" ]; then
 fi
 
 cp .config release/fullconfig.buildinfo
-cp bin/targets/qualcommax/ipq807x/openwrt-*-ipq807x-linksys_homewrk-* release/
-cp bin/targets/qualcommax/ipq807x/openwrt-*-ipq807x-linksys_homewrk.manifest release/
+cp bin/targets/qualcommax/ipq807x/openwrt-*-ipq807x-linksys_*-* release/
+cp bin/targets/qualcommax/ipq807x/openwrt-*-ipq807x-linksys_*.manifest release/
 
 if [ $type = "foss" ]; then
     cp bin/targets/qualcommax/ipq807x/openwrt-imagebuilder* release/

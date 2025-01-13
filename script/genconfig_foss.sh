@@ -6,17 +6,29 @@ if [ ! -z "$1" -a "$1" != "snapshot" ]; then
 else
   buildinfo="https://downloads.openwrt.org/snapshots/targets/qualcommax/ipq807x/config.buildinfo"
 fi
+[ ! -z $3 ] && builddevice=$3
 
 wget $buildinfo -O - | grep -v CONFIG_TARGET_DEVICE_ | grep -v CONFIG_TARGET_ALL_PROFILES | grep -v CONFIG_TARGET_MULTI_PROFILE > .config
 
 echo "
 CONFIG_TARGET_ALL_PROFILES=n 
 CONFIG_TARGET_MULTI_PROFILE=n
+CONFIG_PACKAGE_luci=y
+" >> .config
+
+if [ "${builddevice}" = "HomeWRK" ]; then
+  echo "
+CONFIG_TARGET_qualcommax_ipq807x_DEVICE_linksys_homewrk=y
+CONFIG_TARGET_DEVICE_qualcommax_ipq807x_DEVICE_linksys_homewrk=y
+CONFIG_TARGET_DEVICE_PACKAGES_qualcommax_ipq807x_DEVICE_linksys_homewrk=\"\"
+" >> .config
+elif [ "${builddevice}" = "MX4300" ]; then
+  echo "
 CONFIG_TARGET_qualcommax_ipq807x_DEVICE_linksys_mx4300=y
 CONFIG_TARGET_DEVICE_qualcommax_ipq807x_DEVICE_linksys_mx4300=y
 CONFIG_TARGET_DEVICE_PACKAGES_qualcommax_ipq807x_DEVICE_linksys_mx4300=\"\"
-CONFIG_PACKAGE_luci=y
 " >> .config
+fi
 
 make defconfig
 

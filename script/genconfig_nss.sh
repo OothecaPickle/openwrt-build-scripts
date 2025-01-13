@@ -2,9 +2,11 @@
 
 ver="snapshot" #snapshot or release#
 buildkmod="y"
+builddevice=""
 
 [ ! -z $1 ] && ver=$1
 [ ! -z $2 ] && buildkmod=$2
+[ ! -z $3 ] && builddevice=$3
 
 echo > .config
 
@@ -28,11 +30,21 @@ if [ "${buildkmod}" != "n" ]; then
 fi
 
 cat nss-setup/config-nss.seed |  grep -v CONFIG_PACKAGE_luci >> .config
+
 echo "
-CONFIG_TARGET_qualcommax_ipq807x_DEVICE_linksys_homewrk=y
 CONFIG_PACKAGE_luci=y
 CONFIG_FEED_nss_packages=n
 " >> .config
+
+if [ "${builddevice}" = "HomeWRK" ]; then
+  echo "
+CONFIG_TARGET_qualcommax_ipq807x_DEVICE_linksys_homewrk=y
+" >> .config
+elif [ "${builddevice}" = "MX4300" ]; then
+  echo "
+CONFIG_TARGET_qualcommax_ipq807x_DEVICE_linksys_mx4300=y
+" >> .config
+fi
 make defconfig
 
 for k in $kmods; do grep -q $k=y .config || echo CONFIG_PACKAGE_$k=m >> .config; done
