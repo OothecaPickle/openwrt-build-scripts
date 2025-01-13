@@ -30,11 +30,11 @@ elif [ $type = "nss" ]; then
     #for 24.10, apply "24.10-nss-mx4300" as PR16070 failed on ipq8174-mx4200.dtsi
     case $ver in
         "snapshot")   
-            PATCH="https://github.com/openwrt/openwrt/compare/main...qosmio:openwrt-ipq:main-nss.diff"
+            PATCH="https://github.com/openwrt/openwrt/compare/main...OothecaPickle:openwrt-ipq:main-nss.diff"
             NSSBRANCH="main-nss"
             ;;
         "24.10"*)
-            PATCH="https://github.com/openwrt/openwrt/compare/openwrt-24.10...qosmio:openwrt-ipq:24.10-nss-mx4300.diff"
+            PATCH="https://github.com/openwrt/openwrt/compare/openwrt-24.10...OothecaPickle:openwrt-ipq:24.10-nss-mx4300.diff"
             #PATCH="https://github.com/openwrt/openwrt/compare/openwrt-24.10...qosmio:openwrt-ipq:24.10-nss.diff https://github.com/openwrt/openwrt/pull/16070.diff"
             NSSBRANCH="24.10-nss-mx4300"
             ;;
@@ -68,13 +68,13 @@ for p in $PATCH; do curl -L $p | patch -p1; done
 if [ $type = "nss" ]; then
   if [ -f "feeds.conf.default.rej" ]; then
     echo "##append qosmio's src-git to feeds.conf.default"
-    curl -L "https://raw.githubusercontent.com/qosmio/openwrt-ipq/refs/heads/${NSSBRANCH}/feeds.conf.default" | grep qosmio >> feeds.conf.default
+    curl -L "https://raw.githubusercontent.com/OothecaPickle/openwrt-ipq/refs/heads/${NSSBRANCH}/feeds.conf.default" | grep qosmio >> feeds.conf.default
     rm feeds.conf.default.rej
     cat feeds.conf.default
   fi
   if [ -f "package/firmware/ipq-wifi/Makefile.rej" ]; then
     echo "##use package/firmware/ipq-wifi/Makefile from qosmio"
-    curl -L https://raw.githubusercontent.com/qosmio/openwrt-ipq/refs/heads/${NSSBRANCH}/package/firmware/ipq-wifi/Makefile -o package/firmware/ipq-wifi/Makefile
+    curl -L https://raw.githubusercontent.com/OothecaPickle/openwrt-ipq/refs/heads/${NSSBRANCH}/package/firmware/ipq-wifi/Makefile -o package/firmware/ipq-wifi/Makefile
     rm package/firmware/ipq-wifi/Makefile.rej
     #cat package/firmware/ipq-wifi/Makefile
   fi
