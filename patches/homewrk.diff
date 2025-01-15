@@ -1,0 +1,286 @@
+diff --git a/package/boot/uboot-envtools/files/qualcommax_ipq807x b/package/boot/uboot-envtools/files/qualcommax_ipq807x
+index 2d76045c66..a64d990b0f 100644
+--- a/package/boot/uboot-envtools/files/qualcommax_ipq807x
++++ b/package/boot/uboot-envtools/files/qualcommax_ipq807x
+@@ -7,73 +7,70 @@ touch /etc/config/ubootenv
+ 
+ board=$(board_name)
+ 
++ubootenv_add_mtd() {
++	local idx="$(find_mtd_index "${1}")"
++	[ -n "$idx" ] && \
++		ubootenv_add_uci_config "/dev/mtd$idx" "${2}" "${3}" "${4}"
++}
++
++ubootenv_add_sys_mtd() {
++	local idx="$(find_mtd_index "${1}")"
++	[ -n "$idx" ] && \
++		ubootenv_add_uci_sys_config "/dev/mtd$idx" "${2}" "${3}" "${4}"
++}
++
++ubootenv_add_mmc() {
++	local mmcpart="$(find_mmc_part "${1}")"
++	[ -n "$mmcpart" ] && \
++		ubootenv_add_uci_config "$mmcpart" "${2}" "${3}" "${4}" "${5}"
++}
++
+ case "$board" in
+ dynalink,dl-wrx36|\
+ netgear,rax120v2|\
++netgear,sxr80|\
++netgear,sxs80|\
+ netgear,wax218|\
+ netgear,wax620|\
+-netgear,wax630)
+-	idx="$(find_mtd_index 0:appsblenv)"
+-	[ -n "$idx" ] && \
+-		ubootenv_add_uci_config "/dev/mtd$idx" "0x0" "0x40000" "0x20000" "2"
++netgear,wax630|\
++tplink,eap660hd-v1)
++	ubootenv_add_mtd "0:appsblenv" "0x0" "0x40000" "0x20000"
+ 	;;
+ compex,wpq873|\
+ edgecore,eap102|\
+ zyxel,nbg7815)
+-	idx="$(find_mtd_index 0:appsblenv)"
+-	[ -n "$idx" ] && \
+-		ubootenv_add_uci_config "/dev/mtd$idx" "0x0" "0x10000" "0x10000" "1"
++	ubootenv_add_mtd "0:appsblenv" "0x0" "0x10000" "0x10000"
+ 	;;
+ edimax,cax1800)
+-	idx="$(find_mtd_index 0:appsblenv)"
+-	[ -n "$idx" ] && \
+-		ubootenv_add_uci_config "/dev/mtd$idx" "0x0" "0x10000" "0x20000"
++	ubootenv_add_mtd "0:appsblenv" "0x0" "0x10000" "0x20000"
++	;;
++linksys,homewrk)
++	ubootenv_add_mtd "0:appsblenv" "0x0" "0x40000" "0x40000"
+ 	;;
+ linksys,mx4200v1|\
+ linksys,mx4200v2|\
+ linksys,mx5300|\
+ linksys,mx8500)
+-	idx="$(find_mtd_index u_env)"
+-	[ -n "$idx" ] && \
+-		ubootenv_add_uci_config "/dev/mtd$idx" "0x0" "0x40000" "0x20000" "2"
++	ubootenv_add_mtd "u_env" "0x0" "0x40000" "0x20000"
+ 	;;
+ linksys,mx4300)
+-	idx="$(find_mtd_index u_env)"
+-	[ -n "$idx" ] && \
+-		ubootenv_add_uci_config "/dev/mtd$idx" "0x0" "0x40000" "0x40000" "1"
+-	;;
+-netgear,sxr80|\
+-netgear,sxs80|\
+-tplink,eap660hd-v1)
+-	idx="$(find_mtd_index 0:appsblenv)"
+-	[ -n "$idx" ] && \
+-		ubootenv_add_uci_config "/dev/mtd$idx" "0x0" "0x40000" "0x20000"
++	ubootenv_add_mtd "u_env" "0x0" "0x40000" "0x40000"
+ 	;;
+ redmi,ax6|\
+ xiaomi,ax3600|\
+ xiaomi,ax9000)
+-	idx="$(find_mtd_index 0:appsblenv)"
+-	[ -n "$idx" ] && \
+-		ubootenv_add_uci_config "/dev/mtd$idx" "0x0" "0x10000" "0x20000"
+-	idx2="$(find_mtd_index bdata)"
+-	[ -n "$idx2" ] && \
+-		ubootenv_add_uci_sys_config "/dev/mtd$idx2" "0x0" "0x10000" "0x20000"
++	ubootenv_add_mtd "0:appsblenv" "0x0" "0x10000" "0x20000"
++	ubootenv_add_sys_mtd "bdata" "0x0" "0x10000" "0x20000"
+ 	;;
+ prpl,haze)
+-	mmcpart="$(find_mmc_part 0:APPSBLENV)"
+-	[ -n "$mmcpart" ] && \
+-		ubootenv_add_uci_config "$mmcpart" "0x0" "0x40000" "0x400" "0x100"
++	ubootenv_add_mmc "0:APPSBLENV" "0x0" "0x40000" "0x400" "0x100"
+ 	;;
+ asus,rt-ax89x|\
+ qnap,301w)
+-	idx="$(find_mtd_index 0:appsblenv)"
+-	[ -n "$idx" ] && \
+-		ubootenv_add_uci_config "/dev/mtd$idx" "0x0" "0x20000" "0x20000" "1"
++	ubootenv_add_mtd "0:appsblenv" "0x0" "0x20000" "0x20000"
+ 	;;
+ spectrum,sax1v1k)
+-	mmcpart="$(find_mmc_part 0:APPSBLENV)"
+-	[ -n "$mmcpart" ] && \
+-		ubootenv_add_uci_config "$mmcpart" "0x0" "0x40000" "0x40000" "1"
++	ubootenv_add_mmc "0:APPSBLENV" "0x0" "0x40000" "0x40000" "1"
+ 	;;
+ esac
+ 
+diff --git a/package/firmware/ipq-wifi/Makefile b/package/firmware/ipq-wifi/Makefile
+index 4732a14b1b..5acdb71dd8 100644
+--- a/package/firmware/ipq-wifi/Makefile
++++ b/package/firmware/ipq-wifi/Makefile
+@@ -6,9 +6,9 @@ PKG_RELEASE:=1
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL=$(PROJECT_GIT)/project/firmware/qca-wireless.git
+-PKG_SOURCE_DATE:=2024-10-08
+-PKG_SOURCE_VERSION:=dcbab62272bf5cab2ed857bc655d240970e14f2a
+-PKG_MIRROR_HASH:=e53a3872abf5e35db6baaceb56e6ffa289f8dd9b6226cf8a4d5b87b541179175
++PKG_SOURCE_DATE:=2025-01-15
++PKG_SOURCE_VERSION:=6e1801a4992fe72a98a2219f2dcd038194785971
++PKG_MIRROR_HASH:=569cf6894e21712ed6a5553b4fad0bbdeed14e0cc4b9292f5f86343f7897fc7e
+ PKG_FLAGS:=nonshared
+ 
+ include $(INCLUDE_DIR)/package.mk
+@@ -37,6 +37,7 @@ ALLWIFIBOARDS:= \
+ 	dynalink_dl-wrx36 \
+ 	edgecore_eap102 \
+ 	edimax_cax1800 \
++	linksys_homewrk \
+ 	linksys_mx4200 \
+ 	linksys_mx5300 \
+ 	linksys_mx8500 \
+@@ -164,6 +165,7 @@ $(eval $(call generate-ipq-wifi-package,compex_wpq873,Compex WPQ-873))
+ $(eval $(call generate-ipq-wifi-package,dynalink_dl-wrx36,Dynalink DL-WRX36))
+ $(eval $(call generate-ipq-wifi-package,edgecore_eap102,Edgecore EAP102))
+ $(eval $(call generate-ipq-wifi-package,edimax_cax1800,Edimax CAX1800))
++$(eval $(call generate-ipq-wifi-package,linksys_homewrk,Linksys HomeWRK))
+ $(eval $(call generate-ipq-wifi-package,linksys_mx4200,Linksys MX4200))
+ $(eval $(call generate-ipq-wifi-package,linksys_mx5300,Linksys MX5300))
+ $(eval $(call generate-ipq-wifi-package,linksys_mx8500,Linksys MX8500))
+diff --git a/target/linux/qualcommax/files/arch/arm64/boot/dts/qcom/ipq8174-homewrk.dts b/target/linux/qualcommax/files/arch/arm64/boot/dts/qcom/ipq8174-homewrk.dts
+new file mode 100644
+index 0000000000..0e184452e3
+--- /dev/null
++++ b/target/linux/qualcommax/files/arch/arm64/boot/dts/qcom/ipq8174-homewrk.dts
+@@ -0,0 +1,68 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++
++/dts-v1/;
++
++#include "ipq8174-mx4x00.dtsi"
++
++/ {
++	model = "Linksys HomeWRK";
++	compatible = "linksys,homewrk", "qcom,ipq8074";
++
++	aliases {
++		ethernet3 = &dp4;
++		ethernet4 = &dp5;
++	};
++
++	chosen {
++		bootargs-append = " root=/dev/ubiblock0_1";
++	};
++};
++
++&qpic_nand {
++	status = "okay";
++
++	nand@0 {
++		reg = <0>;
++		/*
++		 * Some devices use Micron NAND with with 8 bit ECC 
++		 * other AMD/Spansion NAND with 4 bit ECC
++		 *nand-ecc-strength = <4>;
++		 *nand-ecc-step-size = <512>;
++		 */
++		nand-bus-width = <8>;
++
++		partitions {
++			compatible = "qcom,smem-part";
++		};
++	};
++};
++
++&dp2 {
++	status = "okay";
++	phy-handle = <&qca8075_1>;
++	label = "wan";
++};
++
++&dp3 {
++	status = "okay";
++	phy-handle = <&qca8075_2>;
++	label = "lan3";
++};
++
++&dp4 {
++	status = "okay";
++	phy-handle = <&qca8075_3>;
++	label = "lan2";
++};
++
++&dp5 {
++	status = "okay";
++	phy-handle = <&qca8075_4>;
++	label = "lan1";
++};
++
++&wifi {
++	status = "okay";
++
++	qcom,ath11k-calibration-variant = "Linksys-HomeWRK";
++};
+diff --git a/target/linux/qualcommax/image/ipq807x.mk b/target/linux/qualcommax/image/ipq807x.mk
+index 77d89b6938..e934ce31ba 100644
+--- a/target/linux/qualcommax/image/ipq807x.mk
++++ b/target/linux/qualcommax/image/ipq807x.mk
+@@ -156,6 +156,21 @@ define Device/edimax_cax1800
+ endef
+ TARGET_DEVICES += edimax_cax1800
+ 
++define Device/linksys_homewrk
++	$(call Device/FitImage)
++	$(call Device/UbiFit)
++	DEVICE_VENDOR := Linksys
++	DEVICE_MODEL := HomeWRK
++	DEVICE_DTS_CONFIG := config@oak03
++	BLOCKSIZE := 256k
++	PAGESIZE := 4096
++	IMAGE_SIZE := 475m
++	NAND_SIZE := 1024m
++	SOC := ipq8174
++	DEVICE_PACKAGES += kmod-leds-pca963x ipq-wifi-linksys_homewrk
++endef
++TARGET_DEVICES += linksys_homewrk
++
+ define Device/linksys_mx
+ 	$(call Device/FitImage)
+ 	DEVICE_VENDOR := Linksys
+diff --git a/target/linux/qualcommax/ipq807x/base-files/etc/board.d/02_network b/target/linux/qualcommax/ipq807x/base-files/etc/board.d/02_network
+index edb1ae9557..23e56b0515 100644
+--- a/target/linux/qualcommax/ipq807x/base-files/etc/board.d/02_network
++++ b/target/linux/qualcommax/ipq807x/base-files/etc/board.d/02_network
+@@ -27,6 +27,7 @@ ipq807x_setup_interfaces()
+ 		ucidef_set_interfaces_lan_wan "lan plc" "wan"
+ 		;;
+ 	compex,wpq873|\
++	linksys,homewrk|\
+ 	linksys,mx4200v1|\
+ 	linksys,mx4200v2|\
+ 	linksys,mx4300|\
+diff --git a/target/linux/qualcommax/ipq807x/base-files/etc/hotplug.d/firmware/11-ath11k-caldata b/target/linux/qualcommax/ipq807x/base-files/etc/hotplug.d/firmware/11-ath11k-caldata
+index 34c0a476d3..ef8a4c8e83 100644
+--- a/target/linux/qualcommax/ipq807x/base-files/etc/hotplug.d/firmware/11-ath11k-caldata
++++ b/target/linux/qualcommax/ipq807x/base-files/etc/hotplug.d/firmware/11-ath11k-caldata
+@@ -30,6 +30,7 @@ case "$FIRMWARE" in
+ 	zte,mf269)
+ 		caldata_extract "0:art" 0x1000 0x20000
+ 		;;
++	linksys,homewrk|\
+ 	linksys,mx4200v1|\
+ 	linksys,mx8500)
+ 		caldata_extract "0:art" 0x1000 0x20000
+diff --git a/target/linux/qualcommax/ipq807x/base-files/lib/upgrade/platform.sh b/target/linux/qualcommax/ipq807x/base-files/lib/upgrade/platform.sh
+index 0691c92184..7e9401d95e 100644
+--- a/target/linux/qualcommax/ipq807x/base-files/lib/upgrade/platform.sh
++++ b/target/linux/qualcommax/ipq807x/base-files/lib/upgrade/platform.sh
+@@ -166,6 +166,11 @@ platform_do_upgrade() {
+ 		fw_setenv upgrade_available 1
+ 		nand_do_upgrade "$1"
+ 		;;
++	linksys,homewrk)
++		CI_UBIPART="rootfs"
++		remove_oem_ubi_volume ubi_rootfs
++		nand_do_upgrade "$1"
++		;;
+ 	linksys,mx4200v1|\
+ 	linksys,mx4200v2|\
+ 	linksys,mx4300|\

@@ -37,6 +37,7 @@ if [ $type = "foss" ]; then
             ;;
         "24.10"*)
             PATCH="https://github.com/openwrt/openwrt/pull/16070.diff"
+            PATCH="${PATCH} https://raw.githubusercontent.com/OothecaPickle/openwrt-mx4300-homewrk/refs/heads/build/patches/homewrk.diff"
             ;;
     esac
 elif [ $type = "nss" ]; then
