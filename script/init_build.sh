@@ -10,6 +10,22 @@ tag="" #commit hash
 [ ! -z $3 ] && sync=$3
 [ ! -z $4 ] && tag=$4
 
+if [ "$ver" = "snapshot" ]; then
+  buildinfo="https://downloads.openwrt.org/snapshots/targets/qualcommax/ipq807x/version.buildinfo"
+else
+  buildinfo="https://downloads.openwrt.org/releases/$ver/targets/qualcommax/ipq807x/version.buildinfo"
+fi
+
+if [ ! -z $tag ]; then
+    git reset --hard $tag
+    sync="n"
+fi    
+
+if [ $sync = "y" ]; then
+    #use published build version instead.
+    git reset --hard $(wget $buildinfo -O - | cut -d '-' -f 2)
+fi
+
 if [ $type = "foss" ]; then    
     #official MX4300 PR from testuser7
     #https://github.com/openwrt/openwrt/pull/16070
@@ -24,41 +40,28 @@ if [ $type = "foss" ]; then
             ;;
     esac
 elif [ $type = "nss" ]; then
+    git remote add patch https://github.com/OothecaPickle/openwrt-ipq
+    git fetch patch
     #qosmio NSS patch
     #https://github.com/qosmio/openwrt-ipq
     #for snapshot, apply "main-nss" 
     #for 24.10, apply "24.10-nss-mx4300" as PR16070 failed on ipq8174-mx4200.dtsi
     case $ver in
-        "snapshot")   
-            PATCH="https://github.com/openwrt/openwrt/compare/main...OothecaPickle:openwrt-ipq:main-nss.diff"
+        "snapshot")
             NSSBRANCH="main-nss"
+            git --no-pager diff --no-color HEAD...patch/${NSSBRANCH} | patch -p1
+            #PATCH="https://github.com/openwrt/openwrt/compare/main...OothecaPickle:openwrt-ipq:main-nss.diff"
             ;;
         "24.10"*)
-            PATCH="https://github.com/openwrt/openwrt/compare/openwrt-24.10...OothecaPickle:openwrt-ipq:24.10-nss-mx4300.diff"
-            #PATCH="https://github.com/openwrt/openwrt/compare/openwrt-24.10...qosmio:openwrt-ipq:24.10-nss.diff https://github.com/openwrt/openwrt/pull/16070.diff"
             NSSBRANCH="24.10-nss-mx4300"
+            git --no-pager diff --no-color HEAD...patch/${NSSBRANCH} | patch -p1
+            #PATCH="https://github.com/openwrt/openwrt/compare/openwrt-24.10...OothecaPickle:openwrt-ipq:24.10-nss-mx4300.diff"
+            #PATCH="https://github.com/openwrt/openwrt/compare/openwrt-24.10...qosmio:openwrt-ipq:24.10-nss.diff https://github.com/openwrt/openwrt/pull/16070.diff"
             ;;
     esac
 fi
 
-[ "$PATCH" = "" ] && echo "Unsupported $type $ver" && exit 1
-
-if [ "$ver" = "snapshot" ]; then
-  buildinfo="https://downloads.openwrt.org/snapshots/targets/qualcommax/ipq807x/version.buildinfo"
-else
-  buildinfo="https://downloads.openwrt.org/releases/$ver/targets/qualcommax/ipq807x/version.buildinfo"
-fi
-
-    
-if [ ! -z $tag ]; then
-    git reset --hard $tag
-    sync="n"
-fi    
-
-if [ $sync = "y" ]; then
-    #use published build version instead.
-    git reset --hard $(wget $buildinfo -O - | cut -d '-' -f 2)
-fi
+[ "$NSSBRANCH" = "" ] && [ "$PATCH" = "" ] && echo "Unsupported $type $ver" && exit 1
 
 echo $PATCH
 for p in $PATCH; do curl -L $p | patch -p1; done
