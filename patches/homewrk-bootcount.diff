@@ -1,0 +1,14 @@
+diff --git a/target/linux/qualcommax/ipq807x/base-files/etc/init.d/bootcount b/target/linux/qualcommax/ipq807x/base-files/etc/init.d/bootcount
+index 176a5a144a..6d4fbfac76 100755
+--- a/target/linux/qualcommax/ipq807x/base-files/etc/init.d/bootcount
++++ b/target/linux/qualcommax/ipq807x/base-files/etc/init.d/bootcount
+@@ -10,6 +10,9 @@ boot() {
+ 		# Unset changed flag after sysupgrade complete
+ 		fw_setenv changed
+ 	;;
++	linksys,homewrk)
++		fw_setenv switch_num
++	;;
+ 	linksys,mx4200v1|\
+ 	linksys,mx4200v2|\
+ 	linksys,mx4300|\

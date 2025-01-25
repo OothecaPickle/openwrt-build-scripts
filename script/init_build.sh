@@ -26,18 +26,19 @@ if [ $sync = "y" ]; then
     git reset --hard $(wget $buildinfo -O - | cut -d '-' -f 2)
 fi
 
-if [ $type = "foss" ]; then    
+if [ $type = "foss" ]; then 
     #official MX4300 PR from testuser7
     #https://github.com/openwrt/openwrt/pull/16070
     #only necessary in 24.10 atm.
     #PATCH="https://github.com/openwrt/openwrt/pull/16070.diff"
     case $ver in
         "snapshot")
-            PATCH="  "
+            PATCH="https://raw.githubusercontent.com/OothecaPickle/openwrt-mx4300-homewrk/refs/heads/build/patches/homewrk-bootcount.diff"
             ;;
         "24.10"*)
             PATCH="https://github.com/openwrt/openwrt/pull/16070.diff"
             PATCH="${PATCH} https://raw.githubusercontent.com/OothecaPickle/openwrt-mx4300-homewrk/refs/heads/build/patches/homewrk.diff"
+            PATCH="${PATCH} https://raw.githubusercontent.com/OothecaPickle/openwrt-mx4300-homewrk/refs/heads/build/patches/homewrk-bootcount.diff"
             ;;
     esac
 elif [ $type = "nss" ]; then
