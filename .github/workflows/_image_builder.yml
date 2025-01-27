@@ -64,7 +64,7 @@ jobs:
 
       - name: Retry build
         if: failure()  && steps.buildfirmware.outcome == 'failure'
-        run:  make clean && sleep 10m && make -j$(($(nproc)+1)) world
+        run:  make clean && sleep 10m && make -j$(($(nproc)+1)) V=sc world
         
       - name: Get build version
         run:  |
@@ -74,10 +74,13 @@ jobs:
       - name: Prepare release
         run:  sh release.sh ${BUILD_TYPE} ${BUILD_VER}
 
+      - name: Generate unique id for release name
+        run: echo release_random=$(echo ${RANDOM}${RANDOM} | md5sum | cut -d' ' -f1) >> $GITHUB_ENV
+
       - name: Release
         uses: ncipollo/release-action@v1
         with:
-            tag: qualcommax-${{env.BUILD_TYPE}}-${{env.BUILD_VER}}-${{env.build_id}}-${{env.BUILD_DEVICE}}
+            tag: ${{env.BUILD_TYPE}}-${{env.BUILD_VER}}-${{env.build_id}}-${{env.BUILD_DEVICE}}-${{env.release_random}}
             allowUpdates: true
             artifacts: release/*
             bodyFile: note.md

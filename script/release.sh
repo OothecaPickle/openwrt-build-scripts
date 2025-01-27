@@ -32,9 +32,9 @@ cp bin/targets/qualcommax/ipq807x/openwrt-*-ipq807x-linksys_*.manifest release/
 
 if [ $type = "foss" ]; then
     cp bin/targets/qualcommax/ipq807x/openwrt-imagebuilder* release/
-    kernel=$(cat release/*linksys_homewrk.manifest | grep ^kernel)
-else
-    kernel=$(cat release/*linksys_homewrk.manifest | grep ^kernel | cut -d '~' -f 1)
+    kernel=$(cat release/*linksys_*.manifest | grep ^kernel)
+elif [ $type = "nss" ]; then
+    kernel=$(cat release/*linksys_*.manifest | grep ^kernel | cut -d '~' -f 1)
 fi
 
 checksum=$(sha256sum release/* | sed 's/release\///')
