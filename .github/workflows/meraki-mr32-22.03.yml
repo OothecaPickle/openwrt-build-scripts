@@ -1,0 +1,24 @@
+name: build 22.03 for meraki mr32
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  call-image-builder-meraki-mr32-22_03:
+    permissions:
+      contents: write
+    uses:
+      ./.github/workflows/_image_builder.yml
+    with:
+      build_settings: 
+        '{"SOURCE_REPO":  "https://github.com/openwrt/openwrt.git", 
+        "SOURCE_BRANCH": "openwrt-22.03",
+        "BUILD_REPO":    "https://github.com/${{github.repository}}.git",
+        "BUILD_BRANCH": "22.03-mr32",
+        "BUILD_INIT": "init_build.sh",
+        "BUILD_TYPE":  "mr32",
+        "BUILD_VER": "22.03-SNAPSHOT",
+        "BUILD_TAG": "",
+        "BUILD_SYNC": "n",
+        "BUILD_KMOD": "y",
+        "BUILD_DEVICE": "MR32"}'
