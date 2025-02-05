@@ -42,7 +42,7 @@ if [ $type = "foss" ]; then
             ;;
     esac
 elif [ $type = "nss" ]; then
-    git remote add patch https://github.com/OothecaPickle/openwrt-ipq
+    git remote add patch https://github.com/OothecaPickle/openwrt
     git fetch patch
     #qosmio NSS patch
     #https://github.com/qosmio/openwrt-ipq
@@ -52,12 +52,12 @@ elif [ $type = "nss" ]; then
         "snapshot")
             NSSBRANCH="main-nss"
             git --no-pager diff --no-color HEAD...patch/${NSSBRANCH} | patch -p1
-            #PATCH="https://github.com/openwrt/openwrt/compare/main...OothecaPickle:openwrt-ipq:main-nss.diff"
+            #PATCH="https://github.com/openwrt/openwrt/compare/main...OothecaPickle:openwrt:main-nss.diff"
             ;;
         "24.10"*)
             NSSBRANCH="24.10-nss-mx4300"
             git --no-pager diff --no-color HEAD...patch/${NSSBRANCH} | patch -p1
-            #PATCH="https://github.com/openwrt/openwrt/compare/openwrt-24.10...OothecaPickle:openwrt-ipq:24.10-nss-mx4300.diff"
+            #PATCH="https://github.com/openwrt/openwrt/compare/openwrt-24.10...OothecaPickle:openwrt:24.10-nss-mx4300.diff"
             #PATCH="https://github.com/openwrt/openwrt/compare/openwrt-24.10...qosmio:openwrt-ipq:24.10-nss.diff https://github.com/openwrt/openwrt/pull/16070.diff"
             ;;
     esac
@@ -73,13 +73,13 @@ for p in $PATCH; do curl -L $p | patch -p1; done
 if [ $type = "nss" ]; then
   if [ -f "feeds.conf.default.rej" ]; then
     echo "##append qosmio's src-git to feeds.conf.default"
-    curl -L "https://raw.githubusercontent.com/OothecaPickle/openwrt-ipq/refs/heads/${NSSBRANCH}/feeds.conf.default" | grep qosmio >> feeds.conf.default
+    curl -L "https://raw.githubusercontent.com/OothecaPickle/openwrt/refs/heads/${NSSBRANCH}/feeds.conf.default" | grep qosmio >> feeds.conf.default
     rm feeds.conf.default.rej
     cat feeds.conf.default
   fi
   if [ -f "package/firmware/ipq-wifi/Makefile.rej" ]; then
     echo "##use package/firmware/ipq-wifi/Makefile from qosmio"
-    curl -L https://raw.githubusercontent.com/OothecaPickle/openwrt-ipq/refs/heads/${NSSBRANCH}/package/firmware/ipq-wifi/Makefile -o package/firmware/ipq-wifi/Makefile
+    curl -L https://raw.githubusercontent.com/OothecaPickle/openwrt/refs/heads/${NSSBRANCH}/package/firmware/ipq-wifi/Makefile -o package/firmware/ipq-wifi/Makefile
     rm package/firmware/ipq-wifi/Makefile.rej
     #cat package/firmware/ipq-wifi/Makefile
   fi
